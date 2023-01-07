@@ -1,0 +1,3 @@
+fastapi[all]
+alembic
+psycopg2-binary

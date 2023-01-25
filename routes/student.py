@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status,Response
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import Session
 
@@ -37,7 +37,7 @@ def add_student(
     except IntegrityError:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail=f"Roll Number: {student.rollNumber} Already Exists",
+            detail=f"Roll number {student.rollNumber} already exists",
         )
     except SQLAlchemyError:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -45,16 +45,39 @@ def add_student(
     return stdDB
 
 
-@route.get("/student_by_uid/{uid}", response_model=schemas.GetStudent)
-def get_student_by_id(
-    uid: str,
+@route.put("/update_student", response_model=schemas.GetStudent)
+def update_student(
+    student: schemas.GetStudent,
     db: Session = Depends(get_db),
     current_user=Depends(oauth2.get_current_user),
 ):
-    student = db.query(models.Student).filter(models.Student.uid == uid).first()
-    if not student:
+    db_st = db.query(models.Student).filter(models.Student.uid == student.uid)
+    if not db_st.first():
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Student Not Found",
+            detail="Student Not Found",
         )
-    return student
+
+    try:
+        db_st.update(student.dict(), synchronize_session=False)
+        db.commit()
+    except IntegrityError:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"Roll number {student.rollNumber} already exists",
+        )
+    except SQLAlchemyError:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return db_st.first()
+
+@route.delete("/delete_student/{uid}")
+def delete_student(uid:str,db:Session=Depends(get_db),current_user=Depends(oauth2.get_current_user)):
+    db_st=db.query(models.Student).filter(models.Student.uid == uid)
+    if not db_st.first():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Student not found")
+    try:
+        db_st.delete(synchronize_session=False)
+        db.commit()
+    except SQLAlchemyError:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

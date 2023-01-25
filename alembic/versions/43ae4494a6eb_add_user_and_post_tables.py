@@ -42,6 +42,7 @@ def upgrade() -> None:
         sa.Column("name", sa.String(), nullable=False),
         sa.Column("className", sa.String(), nullable=False),
         sa.Column("rollNumber", sa.Integer(), nullable=False, unique=True),
+        sa.Column("image", sa.String(), nullable=False),
     )
     op.create_table(
         "tokenblacklist",

@@ -31,6 +31,7 @@ class Student(Base):
     name = Column(String, nullable=False)
     className = Column(String, nullable=False)
     rollNumber = Column(Integer, nullable=False, unique=True)
+    image = Column(String, nullable=False)
 
     class Config:
         orm_mode = True

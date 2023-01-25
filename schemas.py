@@ -7,6 +7,7 @@ class Student(BaseModel):
     name: str
     className: str
     rollNumber: int
+    image: str
 
     class Config:
         orm_mode = True

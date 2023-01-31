@@ -1,39 +1,39 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.exc import IntegrityError, SQLAlchemyError
-from sqlalchemy.orm import Session
+# from fastapi import APIRouter, Depends, HTTPException, status
+# from sqlalchemy.exc import IntegrityError, SQLAlchemyError
+# from sqlalchemy.orm import Session
 
-import models, schemas, utils, oauth2
-from database import get_db
+# import models, schemas, utils, oauth2
+# from database import get_db
 
-route = APIRouter(prefix="/users", tags=["Users"])
-
-
-# @route.get("", response_model=list[schemas.GetUser])
-# def get_users(
-#     db: Session = Depends(get_db), cureent_user=Depends(oauth2.get_current_user)
-# ):
-#     usersList = db.query(models.User).order_by(models.User._id).all()
-#     return usersList
+# route = APIRouter(prefix="/users", tags=["Users"])
 
 
-@route.post("", status_code=status.HTTP_201_CREATED, response_model=schemas.GetUser)
-def add_user(user: schemas.UserLogin, db: Session = Depends(get_db)):
-    hashed_pass = utils.hashPass(user.password)
-    user.password = hashed_pass
-    u = user.dict()
-    usrDB = models.User(**u)
-    try:
-        db.add(usrDB)
-        db.commit()
-        db.refresh(usrDB)
-    except IntegrityError:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT, detail="User Already Exists"
-        )
-    except SQLAlchemyError:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+# # @route.get("", response_model=list[schemas.GetUser])
+# # def get_users(
+# #     db: Session = Depends(get_db), cureent_user=Depends(oauth2.get_current_user)
+# # ):
+# #     usersList = db.query(models.User).order_by(models.User._id).all()
+# #     return usersList
 
-    return usrDB
+
+# @route.post("", status_code=status.HTTP_201_CREATED, response_model=schemas.GetUser)
+# def add_user(user: schemas.UserLogin, db: Session = Depends(get_db)):
+#     hashed_pass = utils.hashPass(user.password)
+#     user.password = hashed_pass
+#     u = user.dict()
+#     usrDB = models.User(**u)
+#     try:
+#         db.add(usrDB)
+#         db.commit()
+#         db.refresh(usrDB)
+#     except IntegrityError:
+#         raise HTTPException(
+#             status_code=status.HTTP_409_CONFLICT, detail="User Already Exists"
+#         )
+#     except SQLAlchemyError:
+#         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+#     return usrDB
 
 
 # @route.get("/{user_id}", response_model=schemas.GetUser)

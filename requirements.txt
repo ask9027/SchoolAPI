@@ -29,6 +29,7 @@ psycopg2-binary
 pyasn1
 pycparser
 pydantic
+pydantic_settings
 python-dotenv
 python-jose
 python-multipart

@@ -12,13 +12,8 @@ class Student(BaseModel):
     class Config:
         orm_mode = True
 
-
 class GetStudent(Student):
     uid: str
-
-    class Config:
-        orm_mode = True
-
 
 class User(BaseModel):
     email: EmailStr

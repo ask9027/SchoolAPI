@@ -11,7 +11,7 @@ access_token_expire_weeks=1
 
 ## Setup alembin
 ```
-alembin uograde head
+alembin upgrade head
 ```
 
 ## RUN uvicorn
